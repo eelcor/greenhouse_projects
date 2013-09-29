@@ -20,7 +20,6 @@ class templogger():
 	bmp180 = 0
 	bh1750 = 0
 	lm75addr = 0
-	i2c1 = SMBus(1)
 	db = 0
 		
 
