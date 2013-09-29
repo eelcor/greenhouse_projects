@@ -1,6 +1,9 @@
 import sqlite3
 from matplotlib import pyplot
 
+#Prevent X11 calls
+matplotlib.use('Agg')
+
 #Connect to the current database and retrieve the time series
 con = sqlite3.connect('tempseries')
 con.text_factory = str
