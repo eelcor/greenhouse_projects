@@ -107,10 +107,9 @@ def readPressure():
 	
 	x1 = (p >> 8) * (p >> 8)
 	x1 = (x1 * 3038) >> 16
-	print(x1)
 	x2 = (-7357 * p) >> 16
-	print(x2)
 	p = p + ((x1 + x2 + 3791) >> 4)
+	return p
 	
 print("BMP Barometric Pressure Sensor test")
 calibration()
