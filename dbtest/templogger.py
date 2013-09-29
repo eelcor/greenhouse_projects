@@ -59,7 +59,7 @@ class templogger():
 		return temp
 	
 	def readRawPressure(self):
-		self.i2c.write_byte_data(self.bmp180, 0xf4, 0xf4) #Read ultra high resolution
+		self.i2c1.write_byte_data(self.bmp180, 0xf4, 0xf4) #Read ultra high resolution
 		time.sleep(0.026)
 		msb = self.i2c.read_byte_data(self.bmp180, 0xf6)
 		lsb = self.i2c.read_byte_data(self.bmp180, 0xf7)
