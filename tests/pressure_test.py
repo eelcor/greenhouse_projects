@@ -70,9 +70,47 @@ def readTemperature():
 	b5 = x1 + x2
 	temp = ((b5 + 8) >> 4)/10.0
 	return temp
-
+	
+def readRawPressure():
+	i2c.write_byte_data(bmp180, 0xf4, 0xf4) #Read ultra high resolution
+	time.sleep(0.026)
+	msb = i2c.read_byte_data(bmp180, 0xf6)
+	lsb = i2c.read_byte_data(bmp180, 0xf7)
+	xlsb = i2c.read_byte_data(bmp180, 0xf8)
+	raw = (msb << 16) + (lsb << 8) + (xlsb) >> 5
+	return raw
+	
+def readPressure():
+	ut = readRawTemp()
+	up = readRawPressure()
+	x1 = ((ut - cal_AC6) * cal_AC5) >> 15
+	x2 = (cal_MC << 11) / (x1 + cal_MD)
+	b5 = x1 + x2
+	
+	b6 = b5 - 4000
+	x1 = (cal_B2 * (b6 * b6) >> 12) >> 11
+	x2 = (cal_AC2 * b6) >> 11
+	x3 = x1 + x2
+	b3 = (((cal_AC1 * 4 + x3) << 3) + 2) / 4
+	
+	x1 = (cal_AC3 * b6) >> 13
+	x2 = (cal_B1 * ((b6 * b6) >> 12)) >> 16
+	x3 = ((x1 + x2) + 2) >> 2
+	
+	b4 = (cal_AC4 * (x3 + 32768)) >> 15
+	b7 = (up - b3) * (50000 >> 3)
+	if (b7 < 0x80000000):
+		p = (b7 * 2) / b4
+	else:
+		p = (b7 / b4) * 2
+	x1 = (p >> 8) * (p >> 8)
+	x1 = (x1 * 3038) >> 16
+	x2 = (-7357 * p) >> 16
+	p = p + ((x1 + x2 + 3791) >> 4)
+	
 print("BMP Barometric Pressure Sensor test")
 calibration()
 print(readRawTemp())
 print(readTemperature())
+print(readPressure())
 printregs()
