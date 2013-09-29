@@ -2,6 +2,8 @@ import sqlite3, random, time
 from smbus import SMBus
 from datetime import datetime
 
+global i2c1
+i2c1 = SMBus(1)
 
 class templogger():
 	_cal_AC1 = 0
@@ -154,13 +156,13 @@ class templogger():
 		print "The pressure is: %i Pascal" % (self.readPressure())		
 	
 	def read_16bit_regu(self, address, register):
-		a = self.i2c1.read_byte_data(address, register)
-		b = self.i2c1.read_byte_data(address, register+1)
+		a = i2c1.read_byte_data(address, register)
+		b = i2c1.read_byte_data(address, register+1)
 		return ((a << 8) | b)
 
 	def read_16bit_regs(self, address, register):
-		a = self.i2c1.read_byte_data(address, register)
-		b = self.i2c1.read_byte_data(address, register+1)
+		a = i2c1.read_byte_data(address, register)
+		b = i2c1.read_byte_data(address, register+1)
 		c = (a << 8)|b
 		if (c & 0x8000):
 			c = (~c & 0xffff)
