@@ -155,7 +155,9 @@ class templogger():
 			pressure,
 			"Greenhouse"
 		)
-		
+		)
+		self.db.commit()
+
 	def print_climate(self):
 		print "The temperature is: %i Degrees Celsius" % (self.readLM75Temperature())
 		print "The light intensity is: %i Lux" % (self.readBH1750Light())
