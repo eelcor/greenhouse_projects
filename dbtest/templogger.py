@@ -18,12 +18,11 @@ class templogger():
 	bmp180 = 0
 	bh1750 = 0
 	lm75addr = 0
-	i2c1 = 0
+	i2c1 = SMBus(1)
 	db = 0
 		
 
 	def __init__(self, filename):
-		self.i2c1 = SMBus(1)
 		self.lm75addr = 0x4f
 		self.db = sqlite3.connect(filename)
 		self.db.execute("CREATE TABLE IF NOT EXISTS temp_series(date datetime, event TEXT, value REAL, detail TEXT)")	
