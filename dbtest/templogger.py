@@ -14,7 +14,13 @@ class templogger():
 	_cal_B2 = 0
 	_cal_MB = 0
 	_cal_MC = 0
-	_cal_MD = 0	
+	_cal_MD = 0
+	bmp180 = 0
+	bh1750 = 0
+	lm75addr = 0
+	i2c1 = 0
+	db = 0
+		
 
 	def __init__(self, filename):
 		self.i2c1 = SMBus(1)
