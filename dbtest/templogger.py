@@ -61,9 +61,9 @@ class templogger():
 	def readRawPressure(self):
 		self.i2c1.write_byte_data(self.bmp180, 0xf4, 0xf4) #Read ultra high resolution
 		time.sleep(0.026)
-		msb = self.i2c.read_byte_data(self.bmp180, 0xf6)
-		lsb = self.i2c.read_byte_data(self.bmp180, 0xf7)
-		xlsb = self.i2c.read_byte_data(self.bmp180, 0xf8)
+		msb = self.i2c1.read_byte_data(self.bmp180, 0xf6)
+		lsb = self.i2c1.read_byte_data(self.bmp180, 0xf7)
+		xlsb = self.i2c1.read_byte_data(self.bmp180, 0xf8)
 		raw = (msb << 16) + (lsb << 8) + (xlsb) >> 5
 		return raw
 	
