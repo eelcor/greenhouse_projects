@@ -86,22 +86,18 @@ def readPressure():
 	x1 = ((ut - cal_AC6) * cal_AC5) >> 15
 	x2 = (cal_MC << 11) / (x1 + cal_MD)
 	b5 = x1 + x2
-	print(b5)
 	
 	b6 = b5 - 4000
 	x1 = (cal_B2 * (b6 * b6) >> 12) >> 11
 	x2 = (cal_AC2 * b6) >> 11
 	x3 = x1 + x2
 	b3 = (((cal_AC1 * 4 + x3) << 3) + 2) / 4
-	print(b3)
 	
 	x1 = (cal_AC3 * b6) >> 13
 	x2 = (cal_B1 * ((b6 * b6) >> 12)) >> 16
 	x3 = ((x1 + x2) + 2) >> 2
 	b4 = (cal_AC4 * (x3 + 32768)) >> 15
 	b7 = (up - b3) * (50000 >> 3)
-	print(b4)
-	print(b7)
 	
 	if (b7 < 0x80000000):
 		p = (b7 * 2) / b4
@@ -111,7 +107,9 @@ def readPressure():
 	
 	x1 = (p >> 8) * (p >> 8)
 	x1 = (x1 * 3038) >> 16
+	print(x1)
 	x2 = (-7357 * p) >> 16
+	print(x2)
 	p = p + ((x1 + x2 + 3791) >> 4)
 	
 print("BMP Barometric Pressure Sensor test")
