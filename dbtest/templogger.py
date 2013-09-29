@@ -28,17 +28,17 @@ class templogger():
 		self.calibration()
 		
 	def calibration(self):
-		self._cal_AC1 = self.read_16bit_regs(bmp180, 0xaa)
-		self._cal_AC2 = self.read_16bit_regs(bmp180, 0xac)
-		self._cal_AC3 = self.read_16bit_regs(bmp180, 0xae)
-		self._cal_AC4 = self.read_16bit_regu(bmp180, 0xb0)
-		self._cal_AC5 = self.read_16bit_regu(bmp180, 0xb2)
-		self._cal_AC6 = self.read_16bit_regu(bmp180, 0xb4)
-		self._cal_B1 = self.read_16bit_regs(bmp180, 0xb6)
-		self._cal_B2 = self.read_16bit_regs(bmp180, 0xb8)
-		self._cal_MB = self.read_16bit_regs(bmp180, 0xba)
-		self._cal_MC = self.read_16bit_regs(bmp180, 0xbc)
-		self._cal_MD = self.read_16bit_regs(bmp180, 0xbe)
+		self._cal_AC1 = self.read_16bit_regs(self.bmp180, 0xaa)
+		self._cal_AC2 = self.read_16bit_regs(self.bmp180, 0xac)
+		self._cal_AC3 = self.read_16bit_regs(self.bmp180, 0xae)
+		self._cal_AC4 = self.read_16bit_regu(self.bmp180, 0xb0)
+		self._cal_AC5 = self.read_16bit_regu(self.bmp180, 0xb2)
+		self._cal_AC6 = self.read_16bit_regu(self.bmp180, 0xb4)
+		self._cal_B1 = self.read_16bit_regs(self.bmp180, 0xb6)
+		self._cal_B2 = self.read_16bit_regs(self.bmp180, 0xb8)
+		self._cal_MB = self.read_16bit_regs(self.bmp180, 0xba)
+		self._cal_MC = self.read_16bit_regs(self.bmp180, 0xbc)
+		self._cal_MD = self.read_16bit_regs(self.bmp180, 0xbe)
 
 	def readRawTemp(self):
 		self.i2c1.write_byte_data(self.bmp180, 0xf4, 0x2e)
