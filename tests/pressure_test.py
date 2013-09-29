@@ -71,6 +71,7 @@ def readTemperature():
 	temp = ((b5 + 8) >> 4)/10.0
 	return temp
 
+print("BMP Barometric Pressure Sensor test")
 calibration()
 print(readRawTemp())
 print(readTemperature())
