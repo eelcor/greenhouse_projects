@@ -1,6 +1,7 @@
 import sqlite3, random, time
 from smbus import SMBus
 from datetime import datetime
+import Adafruit_BBIO.GPIO as GPIO 
 
 class templogger():
 	_cal_AC1 = 0
@@ -179,9 +180,13 @@ class templogger():
 		return c	
 
 if __name__ == '__main__':
+	GPIO.setup("P8_10", GPIO.OUT)
 	tempseries = templogger('tempseries')
 	while 1:
 		tempseries.measure()
 		tempseries.print_climate()
-		time.sleep(5)
+		GPIO.output("P8_10", GPIO.HIGH)
+		time.sleep(0.5)
+		GPIO.output("P8_10", GPIO.LOW)
+		time.sleep(60)
 
