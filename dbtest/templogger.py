@@ -154,14 +154,14 @@ class templogger():
 		print "The light intensity is: %i Lux" % (self.readBH1750Light())
 		print "The pressure is: %i Pascal" % (self.readPressure())		
 	
-	def read_16bit_regu(address, register):
-		a = i2c.read_byte_data(address, register)
-		b = i2c.read_byte_data(address, register+1)
+	def read_16bit_regu(self, address, register):
+		a = self.i2c1.read_byte_data(address, register)
+		b = self.i2c1.read_byte_data(address, register+1)
 		return ((a << 8) | b)
 
-	def read_16bit_regs(address, register):
-		a = i2c.read_byte_data(address, register)
-		b = i2c.read_byte_data(address, register+1)
+	def read_16bit_regs(self, address, register):
+		a = self.i2c1.read_byte_data(address, register)
+		b = self.i2c1.read_byte_data(address, register+1)
 		c = (a << 8)|b
 		if (c & 0x8000):
 			c = (~c & 0xffff)
