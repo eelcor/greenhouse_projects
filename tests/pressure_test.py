@@ -117,4 +117,7 @@ print(readRawTemp())
 print(readTemperature())
 print(readRawPressure())
 print(readPressure())
-printregs()
+
+while(1):
+	print "The pressure is: %i" % readPressure()
+	time.sleep(0.5)
