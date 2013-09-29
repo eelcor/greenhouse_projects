@@ -68,12 +68,13 @@ class templogger():
 		return raw
 	
 	def readPressure(self):
+		# Get raw temperature and pressure
 		ut = self.readRawTemp()
 		up = self.readRawPressure()
+		# Convert to actual compensated and calibrated pressure (see Datasheet)
 		x1 = ((ut - self._cal_AC6) * self._cal_AC5) >> 15
 		x2 = (self._cal_MC << 11) / (x1 + self._cal_MD)
 		b5 = x1 + x2
-	
 		b6 = b5 - 4000
 		x1 = (self._cal_B2 * (b6 * b6) >> 12) >> 11
 		x2 = (self._cal_AC2 * b6) >> 11
@@ -90,8 +91,6 @@ class templogger():
 			p = (b7 * 2) / b4
 		else:
 			p = (b7 / b4) * 2
-		print(p)
-	
 		x1 = (p >> 8) * (p >> 8)
 		x1 = (x1 * 3038) >> 16
 		x2 = (-7357 * p) >> 16
@@ -104,6 +103,7 @@ class templogger():
 		# Swap lower and higher byte
 		temp = (((temp & 0xff) << 8)|((temp >> 8) & 0xff))
 		value = temp >> 5
+		# Make signed integer
 		if (temp & 0x8000):
 			# one's complement
 			value = (~value & 0x1FF)
@@ -117,6 +117,7 @@ class templogger():
 	def readBH1750Light(self):
 		# Measure light
 		luxtmp = self.i2c1.read_word_data(self.bh1750, 0x10)
+		# Convert to actual lux (see Datasheet)
 		lux = (((luxtmp >> 8) & 0xff) | ((luxtmp & 0xff) << 8))/1.2
 		return lux
 
@@ -145,9 +146,17 @@ class templogger():
 		)
 		)
 		self.db.commit()
-	
+		pressure = self.readPressure()
+		self.db.execute(
+		'INSERT INTO temp_series(date, event, value, detail) VALUES(?, ?, ?, ?)',
+		(
+			thisdate,
+			"Pressure",
+			pressure,
+			"Greenhouse"
+		)
+		
 	def print_climate(self):
-		print datetime.now()
 		print "The temperature is: %i Degrees Celsius" % (self.readLM75Temperature())
 		print "The light intensity is: %i Lux" % (self.readBH1750Light())
 		print "The pressure is: %i Pascal" % (self.readPressure())		
@@ -170,7 +179,7 @@ class templogger():
 if __name__ == '__main__':
 	tempseries = templogger('tempseries')
 	while 1:
-		#tempseries.measure()
+		tempseries.measure()
 		tempseries.print_climate()
 		time.sleep(5)
 
