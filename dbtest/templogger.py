@@ -31,7 +31,7 @@ class templogger():
 		self.calibration()
 		self.bmp180 = 0x77
 		self.bh1750 = 0x23
-		self.calibration()
+		#self.calibration()
 		
 	def calibration(self):
 		self._cal_AC1 = self.read_16bit_regs(self.bmp180, 0xaa)
@@ -152,7 +152,7 @@ class templogger():
 		print datetime.now()
 		print "The temperature is: %i Degrees Celsius" % (self.readLM75Temperature())
 		print "The light intensity is: %i Lux" % (self.readBH1750Light())
-		print "The pressure is: %i Pascal" % (self.readPressure())		
+		#print "The pressure is: %i Pascal" % (self.readPressure())		
 	
 	def read_16bit_regu(self, address, register):
 		a = i2c1.read_byte_data(address, register)
