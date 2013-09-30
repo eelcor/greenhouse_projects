@@ -12,7 +12,8 @@ temp = [r[0] for r in cur.fetchall()]
 cur.execute("select value from temp_series where event = 'Light intensity' ORDER by date ASC")
 light = [s[0] for s in cur.fetchall()]
 cur.execute("select value from temp_series where event = 'Pressure' ORDER by date ASC")
-pressure = [t[0] for t in cur.fetchall()]
+press = [t[0] for t in cur.fetchall()]
+pressure = [t * 0.01 for t in press]
 
 #Plot the temperature
 pyplot.subplot(311)
