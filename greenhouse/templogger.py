@@ -2,6 +2,7 @@ import sqlite3, random, time
 from smbus import SMBus
 from datetime import datetime
 import Adafruit_BBIO.GPIO as GPIO 
+import xively, os, datetime, requests
 
 class templogger():
 	_cal_AC1 = 0
@@ -20,9 +21,14 @@ class templogger():
 	lm75addr = 0
 	i2c1 = 0
 	db = 0
+	api = 0
+	feed = 0
+	tempds = 0
+	lightds = 0
+	pressds = 0
 		
 
-	def __init__(self, filename):
+	def __init__(self, filename, feed_id, api_key):
 		self.lm75addr = 0x4f
 		self.db = sqlite3.connect(filename)
 		self.db.execute("CREATE TABLE IF NOT EXISTS temp_series(date datetime, event TEXT, value REAL, detail TEXT)")	
@@ -31,6 +37,27 @@ class templogger():
 		self.bh1750 = 0x23
 		self.i2c1 = SMBus(1)
 		self.calibration()
+		self.api = xively.XivelyAPIClient(api_key)
+		self.feed = self.api.feeds.get(feed_id)
+		self.tempds = self.get_datastream(self.feed, "Temperature")
+		self.lightds = self.get_datastream(self.feed, "Light")
+		self.pressds = self.get_datastream(self.feed, "Pressure")		
+
+	def get_datastream(self, feed, name):
+		try:
+			datastream = feed.datastreams.get(name)
+			return datastream
+		except:
+			datastream = feed.datastreams.create(name, tags="")
+			return datastream
+
+	def publish(self, datastream, value, time):
+		datastream.current_value = value
+		datastream.at = time
+		try:
+			datastream.update()
+		except requests.HTTPError as e:
+			print "HTTPError({0}): {1}".format(e.errno, e.strerror)
 		
 	def calibration(self):
 		self._cal_AC1 = self.read_16bit_regs(self.bmp180, 0xaa)
@@ -123,9 +150,11 @@ class templogger():
 		return lux
 
 	def measure(self):
-		thisdate = datetime.now()
+		thisdate = datetime.datetime.utcnow()
+		nu = datetime.datetime.utcnow()
 		print(thisdate)
 		value = self.readLM75Temperature()
+		self.publish(self.tempds, value, nu)
 		self.db.execute(
 		'INSERT INTO temp_series(date, event, value, detail) VALUES(?,?,?,?)',
 		(
@@ -137,6 +166,7 @@ class templogger():
 		)
 		self.db.commit()
 		lux = self.readBH1750Light()
+		self.publish(self.lightds, lux, nu)
 		self.db.execute(
 		'INSERT INTO temp_series(date, event, value, detail) VALUES(?, ?, ?, ?)',
 		(
@@ -148,6 +178,7 @@ class templogger():
 		)
 		self.db.commit()
 		pressure = self.readPressure()
+		self.publish(self.pressds, pressure, nu)
 		self.db.execute(
 		'INSERT INTO temp_series(date, event, value, detail) VALUES(?, ?, ?, ?)',
 		(
@@ -180,8 +211,11 @@ class templogger():
 		return c	
 
 if __name__ == '__main__':
+	feed_id = os.environ['FEED_ID']
+	api_key = os.environ['API_KEY']
+
 	GPIO.setup("P8_10", GPIO.OUT)
-	tempseries = templogger('tempseries')
+	tempseries = templogger('tempseries', feed_id, api_key)
 	while 1:
 		tempseries.measure()
 		tempseries.print_climate()
