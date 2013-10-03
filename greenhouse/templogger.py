@@ -37,11 +37,11 @@ class templogger():
 		self.bh1750 = 0x23
 		self.i2c1 = SMBus(1)
 		self.calibration()
-		self.api = xively.XivelyAPIClient(api_key)
-		self.feed = self.api.feeds.get(feed_id)
-		self.tempds = self.get_datastream(self.feed, "Temperature")
-		self.lightds = self.get_datastream(self.feed, "Light")
-		self.pressds = self.get_datastream(self.feed, "Pressure")		
+		#self.api = xively.XivelyAPIClient(api_key)
+		#self.feed = self.api.feeds.get(feed_id)
+		#self.tempds = self.get_datastream(self.feed, "Temperature")
+		#self.lightds = self.get_datastream(self.feed, "Light")
+		#self.pressds = self.get_datastream(self.feed, "Pressure")		
 
 	def get_datastream(self, feed, name):
 		try:
@@ -154,7 +154,7 @@ class templogger():
 		nu = datetime.datetime.utcnow()
 		print(thisdate)
 		value = self.readLM75Temperature()
-		self.publish(self.tempds, value, nu)
+		#self.publish(self.tempds, value, nu)
 		self.db.execute(
 		'INSERT INTO temp_series(date, event, value, detail) VALUES(?,?,?,?)',
 		(
@@ -166,7 +166,7 @@ class templogger():
 		)
 		self.db.commit()
 		lux = self.readBH1750Light()
-		self.publish(self.lightds, lux, nu)
+		#self.publish(self.lightds, lux, nu)
 		self.db.execute(
 		'INSERT INTO temp_series(date, event, value, detail) VALUES(?, ?, ?, ?)',
 		(
@@ -178,7 +178,7 @@ class templogger():
 		)
 		self.db.commit()
 		pressure = self.readPressure()
-		self.publish(self.pressds, pressure, nu)
+		#self.publish(self.pressds, pressure, nu)
 		self.db.execute(
 		'INSERT INTO temp_series(date, event, value, detail) VALUES(?, ?, ?, ?)',
 		(
