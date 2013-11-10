@@ -128,7 +128,7 @@ class weather():
 		temperature = self.readLM75Temperature()
 		lux = self.readBH1750Light()
 		pressure = float(self.readPressure()/100)
-		return {'time':str(thisdate), 'temp':temperature, 'light':lux, 'pressure':pressure}
+		return {'time':str(thisdate), 'temp':round(temperature,2), 'light':round(lux,2), 'pressure':round(float(pressure),2)}
 
 	def print_climate(self):
 		print "The temperature is: %i Degrees Celsius" % (self.readLM75Temperature())

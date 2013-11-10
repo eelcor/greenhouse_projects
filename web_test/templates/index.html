@@ -28,18 +28,12 @@
 		var button1=$('#button1');
 		button1.click(function(event)
 		{
-			console.log("button clicked!");
-			$.get('{{ url_for('get_data_1day') }}',function(data){
-				console.log(data);
-				console.log(data.dataset);
-				var str = "<h3>Data from server:</h3>";
-				$.each(data.dataset, function(i, dataset){
-					console.log("value of index " + i);
-					console.log(dataset.naam);
-					console.log(dataset.beroep);
-					str = str + "<p>" + dataset.naam + " is " + dataset.beroep + "</p>";
-					$('#weerdata').html(str);
-				});
+			$.get('{{ url_for('measure') }}',function(data){
+				var str = "<h3>Data from server ("+data.time+"):</h3>";
+				str += "<p>Light intensity: "+data.light+" lux</p>";
+				str += "<p>Pressure: "+data.pressure+" mbar</p>";
+				str += "<p>Temperature: "+data.temp+" Celsius</p>";
+				$('#weerdata').html(str);
 				});
 			button1.blur();
 		});

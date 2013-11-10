@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, abort, session, jsonify
 from Adafruit_BBIO import GPIO
+from weather import weather
 
 app = Flask(__name__)
 
@@ -26,16 +27,13 @@ def switch():
 		GPIO.output("P8_10", GPIO.LOW)
 	return redirect(url_for('home'))
 
-@app.route('/get_data_1day')
-def get_data_1day():
-	a={'dataset':[
-    {'naam':'Eelco', 'beroep':'consultant'},
-    {'naam':'Marije','beroep':'orthopedagoog'},
-    {'naam':'Hugo','beroep':'grote broer'}
-	]}
+@app.route('/measure')
+def measure():
+	a=weer.measure()
 	return jsonify(a)
 
 if __name__ == '__main__':
+	weer=weather()
 	GPIO.setup("P8_10",GPIO.OUT)
 	GPIO.output("P8_10", GPIO.LOW)
     	app.run(host='0.0.0.0')
