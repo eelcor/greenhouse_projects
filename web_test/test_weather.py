@@ -1,4 +1,6 @@
-import weather
+from Adafruit_BBIO import GPIO
+from  weather import weather
+import time
 
 GPIO.setup("P8_10", GPIO.OUT)
 weer = weather()
