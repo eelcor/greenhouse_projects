@@ -151,9 +151,9 @@ class weather():
 
 if __name__ == '__main__':
 	GPIO.setup("P8_10", GPIO.OUT)
-	weather = templogger()
+	weer = weather()
 	while 1:
-		weather.print_climate()
+		weer.print_climate()
 		GPIO.output("P8_10", GPIO.HIGH)
 		time.sleep(0.1)
 		GPIO.output("P8_10", GPIO.LOW)
