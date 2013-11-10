@@ -1,6 +1,6 @@
 from smbus import SMBus
 import Adafruit_BBIO.GPIO as GPIO 
-import time
+import time, datetime
 
 class weather():
 	_cal_AC1 = 0
