@@ -125,10 +125,10 @@ class weather():
 
 	def measure(self):
 		thisdate = datetime.datetime.utcnow()
-		print(thisdate)
 		temperature = self.readLM75Temperature()
 		lux = self.readBH1750Light()
 		pressure = self.readPressure()
+		return {'time':thisdate, 'temp':temperature, 'light':lux, 'pressure':pressure}
 
 	def print_climate(self):
 		print "The temperature is: %i Degrees Celsius" % (self.readLM75Temperature())
