@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block content %}
+<div data-role=page id=home>
+	<div data-role="header"  class="ui-header ui-bar-a" role="banner">
+		<h1 class="ui-title" role="heading" aria-level="1"> Smart switch and monitor... </h1>
+	</div>
+	<div data-role=content>
+		<form method="post" act	ion="{{ url_for('switch') }}">
+			<div data-role="fieldcontain">
+				<label for="switch1">Led 1:</label>
+				<select name="switch1" id="switch1" data-role="slider">
+					<option value="off">Off</option>
+					<option value="on">On</option>
+				</select>
+			</div>
+		</form>
+		<div id="weerdata" data-role="collapsible">
+		</div>
+		<button id="button1" type="button" data-icon="search" data-corners="false"> Test data </button>
+	</div>
+	<div data-role="footer" class="ui-footer ui-bar-a" role="banner">
+		<h4 class="ui-title" role="heading" aria-level="1">Powered by Flask/jQuery/jQuery Mobile</h4>
+	</div>
+</div>
+<script>
+		var led1switch = $('#switch1');
+		led1switch.val('{{ led1val }}');
+		var button1=$('#button1');
+		button1.click(function(event)
+		{
+			console.log("button clicked!");
+			$.get('{{ url_for('get_data_1day') }}',function(data){
+				console.log(data);
+				console.log(data.dataset);
+				var str = "<h3>Data from server:</h3>";
+				$.each(data.dataset, function(i, dataset){
+					console.log("value of index " + i);
+					console.log(dataset.naam);
+					console.log(dataset.beroep);
+					str = str + "<p>" + dataset.naam + " is " + dataset.beroep + "</p>";
+					$('#weerdata').html(str);
+				});
+				});
+			button1.blur();
+		});
+		led1switch.change(function(event)
+		{
+			var postdata = {switch1: $('#switch1').val()};
+			$.post('{{ url_for('switch') }}', postdata);
+		});
+	</script>
+</div>
+{% endblock %}

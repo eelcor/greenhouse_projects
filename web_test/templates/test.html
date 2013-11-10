@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+<div data-role=page id=home>
+  <div data-role=header>
+    <h1>Home</h1>
+  </div>
+
+  <div data-role=content>
+    <span> Choose an apartment: </span>
+    <div data-role=controlgroup>
+      <label for=id1>1 bedroom</label>
+      <input type=radio id=id1 name=rooms />
+      <label for=id2>2 bedrooms</label>
+      <input type=radio id=id2 name=rooms />
+      <label for=id3>3 bedrooms</label>
+      <input type=radio id=id3 name=rooms />
+      <label for=id4>4 bedrooms</label>
+      <input type=radio id=id4 name=rooms />
+      <label for=id5>5 bedrooms</label>
+      <input type=radio id=id5 name=rooms />
+    </div>
+  </div>
+</div>
+{% endblock %}
