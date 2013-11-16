@@ -28,7 +28,7 @@ class templogger():
 	pressds = 0
 		
 
-	def __init__(self, filename, feed_id, api_key):
+	def __init__(self, filename):
 		self.lm75addr = 0x4f
 		self.db = sqlite3.connect(filename)
 		self.db.execute("CREATE TABLE IF NOT EXISTS temp_series(date datetime, event TEXT, value REAL, detail TEXT)")	
@@ -211,11 +211,11 @@ class templogger():
 		return c	
 
 if __name__ == '__main__':
-	feed_id = os.environ['FEED_ID']
-	api_key = os.environ['API_KEY']
+	#feed_id = os.environ['FEED_ID']
+	#api_key = os.environ['API_KEY']
 
 	GPIO.setup("P8_10", GPIO.OUT)
-	tempseries = templogger('tempseries', feed_id, api_key)
+	tempseries = templogger('tempseries')
 	while 1:
 		tempseries.measure()
 		tempseries.print_climate()
