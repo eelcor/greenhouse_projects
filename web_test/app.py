@@ -25,8 +25,8 @@ def test():
 @app.route('/switch', methods=['POST'])
 def switch():
 	led1 = request.form['switch1']
-	print(request.form)
-	print led1
+	#print(request.form)
+	#print led1
 	if led1 == 'on':
 		GPIO.output("P8_10", GPIO.HIGH)
 	if led1 == 'off':
