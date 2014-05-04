@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+<div data-role=page id=home>
+	<div data-role="header"  class="ui-header ui-bar-a" role="banner">
+		<h1 class="ui-title" role="heading" aria-level="1"> Smart Energy Monitor </h1>
+	</div>
+	<div data-role="content">
+		<div id="meetdata">
+		</div>
+	</div>
+	<div data-role="footer" class="ui-footer ui-bar-a" role="banner">
+		<h4 class="ui-title" role="heading" aria-level="1">Powered by Flask/jQuery/jQuery Mobile</h4>
+	</div>
+</div>
+<script>
+	setInterval(
+		function()
+		{
+			$.getJSON(
+			'{{ url_for('measure') }}', function(data){
+				var str = "<H2>Current timestamp ("+data.time+")</H2>"; 
+				str += "<H1>Current Power: "+data.power+" Watt</H1>";
+				str += "<H1>Total usage: "+data.consumption+" KWh</H1>";
+				$('#meetdata').html(str);
+			});
+		}
+		,1000);
+</script
+{% endblock %}
