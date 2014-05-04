@@ -15,13 +15,13 @@
 # Author: Joao Paulo Barraca <jpbarraca@gmail.com>
 #
 # BeagleBoneBlack and Raspberry Pi use different GPIO access methods.
-# Select the most appropriate for you by uncommenting one of the 
+# Select the most appropriate for you by uncommenting one of the
 # two imports.
 # For Raspberry Pi
-#import Ras.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 #For BBBB
-import RPi.GPIO as GPIO
+import Adafruit_BBIO.GPIO as GPIO
 
 import spidev
 import time
@@ -172,9 +172,8 @@ class NRF24:
     child_pipe_enable = [ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5]
 
     def __init__(self):
-	GPIO.setmode(GPIO.BCM)
-        self.ce_pin = 22
-        self.irq_pin = 23
+        self.ce_pin = "P9_15"
+        self.irq_pin = "P9_16"
         self.channel = 76
         self.data_rate = NRF24.BR_1MBPS
         self.wide_band = False # 2Mbs data rate in use?
@@ -193,13 +192,17 @@ class NRF24:
             GPIO.output(self.ce_pin, GPIO.LOW)
         return
 
-    def irqWait(self):
-        # A race condition may occur here.
-        # TODO: Should set a timeout
-        if GPIO.input(self.irq_pin) == 0:
-            return
+    def irqWait(self, timeout = 30000):
+        # CHANGE: detect module name because wait_for_edge is not available in
+        # other libraries
+        if GPIO.__name__ != "Adafruit_BBIO.GPIO":
+            return False
 
-        GPIO.wait_for_edge(self.irq_pin, GPIO.FALLING)
+        # TODO: A race condition may occur here.
+        if GPIO.input(self.irq_pin) == 0: # Pin is already down. Packet is waiting?
+            return True
+
+        return GPIO.wait_for_edge(self.irq_pin, GPIO.FALLING, timeout) == 1
 
     def read_register(self, reg, blen=1):
         buf = [NRF24.R_REGISTER | ( NRF24.REGISTER_MASK & reg )]
@@ -408,12 +411,12 @@ class NRF24:
         # Flush buffers
         self.flush_rx()
         self.flush_tx()
-    
+
     def end(self):
         if self.spidev:
             self.spidev.close()
             self.spidev = None
-        
+
     def startListening(self):
         self.write_register(NRF24.CONFIG, self.read_register(NRF24.CONFIG) | _BV(NRF24.PWR_UP) | _BV(NRF24.PRIM_RX))
         self.write_register(NRF24.STATUS, _BV(NRF24.RX_DR) | _BV(NRF24.TX_DS) | _BV(NRF24.MAX_RT))
@@ -451,7 +454,7 @@ class NRF24:
             status = self.read_register(NRF24.OBSERVE_TX, 1)
             if (status & (_BV(NRF24.TX_DS) | _BV(NRF24.MAX_RT))) or (time.time() - sent_at > timeout ):
                 break
-            time.sleep(10 / 1000000.0) 
+            time.sleep(10 / 1000000.0)
 
         what = self.whatHappened()
 
@@ -478,20 +481,23 @@ class NRF24:
     def getDynamicPayloadSize(self):
         return self.spidev.xfer2([NRF24.R_RX_PL_WID, NRF24.NOP])[1]
 
-    def available(self, pipe_num=None, irq_wait=False):
+    def available(self, pipe_num=None, irq_wait=False, irq_timeout=30000):
         if not pipe_num:
             pipe_num = []
 
         status = self.get_status()
         result = False
 
-        if irq_wait:
-            self.irqWait()
-
         # Sometimes the radio specifies that there is data in one pipe but
         # doesn't set the RX flag...
         if status & _BV(NRF24.RX_DR) or (status & 0b00001110 != 0b00001110):
             result = True
+        else:
+            if irq_wait: # Will use IRQ wait
+                if self.irqWait(irq_timeout): # Do we have a packet?
+                    status = self.get_status() # Seems like we do!
+                    if status & _BV(NRF24.RX_DR) or (status & 0b00001110 != 0b00001110):
+                        result = True 
 
         if result:
             # If the caller wants the pipe number, include that
