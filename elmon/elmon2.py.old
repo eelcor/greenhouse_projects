@@ -5,9 +5,6 @@ import time, thread
 import datetime
 from nrf24 import NRF24
 from flask import Flask, render_template, request, redirect, url_for, abort, session, jsonify
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from power import Power
 
 #nRF24L01 Setup
 def radio_setup(pipe_tx,pipe_rx):
@@ -48,9 +45,6 @@ def receiveloop(name,radio):
 				kwh = x_new/500
 				x_old = x_new
 				t_old = t_new
-				new_power = Power(timestamp, x_new, power, kwh)
-				session.add(new_power)
-				session.commit()
 				print("New counter value received: "+str(x_new))
 
 def printresults(name):
@@ -79,11 +73,6 @@ if __name__ == '__main__':
 	#init variables
 	kwh = 0
 	power = 0
-
-	#init database
-	engine = create_engine('sqlite:////home//pi//notebooks//power.db')
-	Session = sessionmaker(bind=engine)
-	session = Session()
 
 	#init threads
 	print("Starting display loop...")
